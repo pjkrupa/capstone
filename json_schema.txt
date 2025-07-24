@@ -1,0 +1,15 @@
+json fields:
+
+- medical_record_number
+- name
+- age
+- weight
+- blood_pressure
+- date_admitted
+- date_discharged
+- attending_physician
+- diagnosis
+- other_diagnosis
+- current_medications
+
+

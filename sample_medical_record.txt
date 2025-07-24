@@ -1,0 +1,60 @@
+MEDICAL RECORD
+
+Patient name: John Doe
+Medical Record Number: 123456789
+Date admitted: July 1, 2050
+Date discharged: July 3, 2050
+Attending Physician: Dr. Will Teachwell
+Resident Physician: Dr. Bea Goodoc
+Diagnosis: Left-sided systolic congestive heart failure
+EF of 35% on echo performed 3 months ago
+Other diagnoses: Type 2 Diabetes
+Stage 2 Hypertension
+Osteoarthritis
+History:
+Mr. Doe is a 72 year old gentleman with a history of CHF who presented with a 3 day history of gradually
+worsening lower extremity edema, weight gain, and shortness of breath. Today while trying to mow his
+lawn he had to stop multiple times to catch his breath and developed some chest tightness leading him
+to come to the emergency room. He denies any other decrease in exercise tolerance or chest pain
+leading up to this event. He reports good understanding and adherence to his medications, but does
+report that when his daughter was visiting town 4 days prior to admission that he and his wife took her
+out for a special Mexican dinner and he indulged in several baskets of chips and salsa.
+Problems:
+1. CHF – On admission he had 3+ lower extremity pitting edema, rales from the bases to midlung
+bilaterally, elevated jugular venous pressure and a CXR consistent with volume overload. He was
+diuresed and was able to quickly wean off supplemental oxygen and exam revealed resolution of his
+edema and rales at discharge. Discharge weight is 202 lbs. Given that dietary indiscretion led to the
+exacerbation, it was not felt necessary to change his home diuretic regimen at this time. He was re-
+educated on diet and taking daily weights including information about weight gain that should trigger
+him to call his primary doctor. He will follow up with his doctor at the end of this week for volume
+reassessment and electrolyte labs.
+2. Chest pain – due to chest pain while mowing, he was ruled out for an MI with serial EKGs and
+enzymes. His EKGs remained unchanged from previous and his enzyme curve remained normal. Chest
+pain was attributed to his hypoxia from his CHF and no further work-up was pursued at this time. On
+follow-up, should readdress and make sure that he remains without change in his exercise tolerance and
+remains pain free now that he is back to euvolemia.
+3. Type 2 Diabetes – His HgbA1C was 7.3 which is good control for him at this time. No changes were
+made to his diabetic regimen. On health maintenance questioning he revealed it has been 18 months
+since his last eye appointment and we recommended he make an appointment as soon as he can get in.
+4. Hypertension – Though initially elevated at the time of admission, his BP came down nicely with
+diuresis and was 142/82 once euvolemic. In keeping with JNC-7 guidelines, we increased his lisinopril to
+40 mg/day and his metoprolol to 50mg BID for optimal BP control given his diabetes. He resonded well
+to this without complications and was 126/72 at discharge.
+5. Osteoarthritis – His knee pain was well controlled with Tylenol prn.
+Medications:
+New medications: None
+Medications discontinued: None
+Medications continued with dose changes: Metorolol 50 mg PO BID
+Lisinopril 40 mg PO qd
+Medications continued unchanged: ASA 81 mg PO qd
+Furosemide 40 mg PO BID
+Spironolactone 50 mg PO qd
+Metformin 1000 mg PO BID
+Glipizide 10 mg PO BID
+Tylenol 325 mg PO q 4 hours as needed for pain
+Functional status: He is at baseline, no assistance needed, independent ADLs .
+Pending Results: None
+Follow up: Dr. Primary Care - Friday, July 7 at 11:30
+Dr. Regular Cardiologist – Thursday, July 27 at 2:30
+Cc: Dr. Primary Care – fax 123-456-7890
+Dr. Regular Cardiologist – fax 123-098-7654
