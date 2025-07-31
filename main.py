@@ -1,6 +1,9 @@
 from setup_parser import get_parser
+from settings import Settings
 import getpass
 from llm_client import get_response
+
+settings = Settings()
 
 parser = get_parser()
 
