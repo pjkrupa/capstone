@@ -16,6 +16,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
     args_dict = {k: v for k, v in vars(args).items() if v is not None}
     settings = Settings().model_copy(update=args_dict)
+    if not settings.tool:
+        print("You need to choose a tool, either through the CLI (-t or --tool) or by adding a TOOL environmental variable.")
+        sys.exit(1)
 
     while True:
         api_key = getpass.getpass("Enter your API key: ")

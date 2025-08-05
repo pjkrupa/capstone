@@ -17,7 +17,7 @@ def get_response(settings: Settings, prompt: str) -> str:
         tool_choice={
             "type": "function",
             "function": {
-                "name": "populate_patient_record"
+                "name": settings.tool
                 }
             }
     )
