@@ -1,20 +1,21 @@
 from setup_parser import get_parser
 from settings import Settings
+import psycopg2
 import getpass
 from llm_client import get_response
+from database import make_db_string, make_tables, save_response, row_count
+import sys
 
 settings = Settings()
-
 parser = get_parser()
+
 
 
 if __name__ == "__main__":
 
     args = parser.parse_args()
-
-    model = args.model or "openai/gpt-4o"
-    path = args.path
-    query_n = args.number
+    args_dict = {k: v for k, v in vars(args).items() if v is not None}
+    settings = Settings().model_copy(update=args_dict)
 
     while True:
         api_key = getpass.getpass("Enter your API key: ")
@@ -22,13 +23,33 @@ if __name__ == "__main__":
             print("API key cannot be empty, please try again.")
             continue
         else:
+            settings.api_key = api_key
             break
-    
-    with open(path) as f:
-        prompt  = f.read()
 
-    for i in range(0,query_n):
-        print(f"Query {i}")
-        llm_response = get_response(model, prompt, api_key)
-        print(f"The response is type {type(llm_response)}")
-        print(llm_response)
+    try:
+        with open(settings.path) as f:
+            prompt  = f.read()
+    except Exception as e:
+        print(f"There was a problem loading the prompt file: {e}")
+        sys.exit(1)
+    
+    database = make_db_string(settings)
+    
+    with psycopg2.connect(database) as conn:
+        make_tables(conn, settings)
+
+        counter = 1
+        for i in range(0,settings.runs):
+            print(f"Sending query {i+1}")
+            raw_response = get_response(settings, prompt)
+            print(f"From the loop: {type(raw_response)}")
+            try:
+                save_response(conn=conn, raw_response=raw_response, settings=settings)
+                print("Save successful.")
+                counter += 1
+            except Exception as e:
+                print(f"Something went wrong: {e}")
+                continue
+        final_row_count = row_count(conn=conn, settings=settings)
+        print(f"Saved {final_row_count} records for the {settings.run_id} run.")
+        

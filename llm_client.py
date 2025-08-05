@@ -1,27 +1,31 @@
 from litellm import completion
+from settings import Settings
 from llm_tools import tools
 import json
 
-def get_response(model: str, prompt: str, api_key: str):
+def get_response(settings: Settings, prompt: str):
+    
     messages = [
     {"role": "user", "content": prompt}
     ]
 
     response = completion(
-        model=model,
+        model=settings.model,
         tools=tools,
-        api_key=api_key,
+        api_key=settings.api_key,
         messages=messages,
         tool_choice="auto",
     )
 
-    
+    print(f"From before JSON conversion: {type(response)}")
+    raw_response = response.model_dump_json()
+    print(f"From after JSON conversion: {type(raw_response)}")
+    return raw_response
 
-    tool_calls = response['choices'][0]['message'].get('tool_calls', [])
-    if not tool_calls:
-        raise ValueError("No tool call was returned by the model.")
-    
-    arguments_json = tool_calls[0]['function']['arguments']
 
-    patient_record = json.loads(arguments_json)
-    return patient_record
+# logic for parsing the raw response later:
+# tool_calls = response['choices'][0]['message'].get('tool_calls', [])
+# if not tool_calls:
+#    raise ValueError("No tool call was returned by the model.")
+    
+# arguments_json = tool_calls[0]['function']['arguments']

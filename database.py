@@ -1,36 +1,50 @@
-import psycopg2
+from psycopg2 import connect
 import datetime
+from settings import Settings
 
-def make_db_string(settings):
+def make_db_string(settings: Settings):
     db_string = f"dbname={settings.pg_database} user={settings.pg_user} password={settings.pg_password} host={settings.pg_host} port={settings.pg_port}"
+    print(db_string)
     return db_string
 
-def make_tables(settings):
+def make_tables(conn: connect, settings: Settings):
     """
     This function creates the tables needed.
     """
-    database = make_db_string(settings)
-    with psycopg2.connect(database) as conn:
-        cur = conn.cursor()
+    with conn.cursor() as cur:
+        cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS responses (
+                id SERIAL PRIMARY KEY,
+                run_id VARCHAR,
+                model VARCHAR,
+                raw_response JSONB,
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            """
+        )
 
-        # the rest of the function goes here lol
-
-def save_response():
+def save_response(conn: connect, raw_response: str, settings: Settings):
     """
     This function saves a response to the database.
     """
-    pass
+    with conn.cursor() as cur:
+        cur.execute(
+            """
+            INSERT INTO responses (run_id, model, raw_response)
+            VALUES (%s, %s, %s);
+            """,
+            (settings.run_id, settings.model, raw_response)
+        )
 
-
-
-
-class Responses(Base):
-    __tablename__ = 'responses'
-    id = Column(Integer, primary_key=True)
-    run_id = Column(String)
-    model = Column
-    raw_response = Column(String)
-    timestamp = Column(DateTime, default=datetime.now())
-
-def create_tables():
-    pass
+def row_count(conn: connect, settings: Settings):
+    with conn.cursor() as cur:
+        cur.execute(
+            """
+            SELECT COUNT(*)
+            FROM responses
+            WHERE run_id = %s;
+            """,
+            (settings.run_id,)
+        )
+        return cur.fetchone()[0]

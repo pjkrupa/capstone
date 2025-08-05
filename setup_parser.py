@@ -15,10 +15,17 @@ def get_parser():
         help='Path to the text file where the test prompt is saved.',
     )
     parser.add_argument(
-        '-n',
-        '--number',
+        '-r',
+        '--runs',
         type=int,
         required=True,
         help='Number of times you want to run the test query.',
+    )
+    parser.add_argument(
+        '-i',
+        '--run_id',
+        type=str,
+        required=True,
+        help='ID for this particular run so you can identify it later.'
     )
     return parser
