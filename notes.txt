@@ -6,3 +6,8 @@ The response is type <class 'dict'>
 Query 1
 The response is type <class 'dict'>
 {'medical_record_number': '123456789', 'name': 'John Doe', 'age': 72, 'date_admitted': '2050-07-01', 'date_discharged': '2050-07-03', 'attending_physician': 'Dr. Will Teachwell', 'diagnosis': 'Left-sided systolic congestive heart failure', 'other_diagnosis': ['Type 2 Diabetes', 'Stage 2 Hypertension', 'Osteoarthritis'], 'current_medications': ['Metoprolol 50 mg PO BID', 'Lisinopril 40 mg PO qd', 'ASA 81 mg PO qd', 'Furosemide 40 mg PO BID', 'Spironolactone 50 mg PO qd', 'Metformin 1000 mg PO BID', 'Glipizide 10 mg PO BID', 'Tylenol 325 mg PO q 4 hours as needed for pain']}
+
+TODO:
+- remove hard-coding for the "tool" logic so user can select a tool from settings
+- build test for patient record JSON
+- design response_tests table schema

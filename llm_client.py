@@ -3,7 +3,7 @@ from settings import Settings
 from llm_tools import tools
 import json
 
-def get_response(settings: Settings, prompt: str):
+def get_response(settings: Settings, prompt: str) -> str:
     
     messages = [
     {"role": "user", "content": prompt}
@@ -14,7 +14,12 @@ def get_response(settings: Settings, prompt: str):
         tools=tools,
         api_key=settings.api_key,
         messages=messages,
-        tool_choice="auto",
+        tool_choice={
+            "type": "function",
+            "function": {
+                "name": "populate_patient_record"
+                }
+            }
     )
 
     print(f"From before JSON conversion: {type(response)}")

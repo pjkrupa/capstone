@@ -51,5 +51,6 @@ if __name__ == "__main__":
                 print(f"Something went wrong: {e}")
                 continue
         final_row_count = row_count(conn=conn, settings=settings)
-        print(f"Saved {final_row_count} records for the {settings.run_id} run.")
+        print(f"Saved {counter} records for the {settings.run_id} run.")
+        print(f"The {settings.run_id} run has a total of {final_row_count} rows.")
         
