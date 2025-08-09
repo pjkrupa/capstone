@@ -3,6 +3,7 @@ from settings import Settings
 import psycopg2
 import getpass
 from llm_client import get_response
+from llm_tools import get_function
 from database import make_db_string, make_tables, save_response, row_count
 import sys
 
@@ -16,9 +17,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     args_dict = {k: v for k, v in vars(args).items() if v is not None}
     settings = Settings().model_copy(update=args_dict)
-    if not settings.tool:
-        print("You need to choose a tool, either through the CLI (-t or --tool) or by adding a TOOL environmental variable.")
-        sys.exit(1)
+    settings.function = get_function(settings.function_path)
 
     while True:
         api_key = getpass.getpass("Enter your API key: ")

@@ -1,10 +1,11 @@
 from litellm import completion
 from settings import Settings
-from llm_tools import tools
-import json
+from pathlib import Path
 
 def get_response(settings: Settings, prompt: str) -> str:
     
+    function_name = Path(settings.function_path).stem
+    tools = [settings.function]
     messages = [
     {"role": "user", "content": prompt}
     ]
@@ -14,10 +15,11 @@ def get_response(settings: Settings, prompt: str) -> str:
         tools=tools,
         api_key=settings.api_key,
         messages=messages,
+        stream=False,
         tool_choice={
             "type": "function",
             "function": {
-                "name": settings.tool
+                "name": function_name
                 }
             }
     )

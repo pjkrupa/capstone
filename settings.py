@@ -13,5 +13,6 @@ class Settings(BaseSettings):
     path: Optional[str] = ""
     runs: Optional[int] = 0
     run_id: Optional[str] = ""
-
+    function: Optional[dict] = {}
+    function_path: Optional[str] = ""
     model_config = SettingsConfigDict(env_file='.env')

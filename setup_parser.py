@@ -28,4 +28,11 @@ def get_parser():
         required=True,
         help='ID for this particular run so you can identify it later.'
     )
+    parser.add_argument(
+        '-f',
+        '--function_path',
+        type=str,
+        required=True,
+        help='Path to the YAML file defining the schema to be populated by the LLM call. The file name is used to name the function'
+    )
     return parser
