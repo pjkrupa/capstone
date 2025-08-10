@@ -3,7 +3,7 @@ from settings import Settings
 import psycopg2
 import getpass
 from llm_client import get_response
-from llm_tools import get_function
+from llm_tools import validate_yaml, get_function
 from database import make_db_string, make_tables, save_response, row_count
 import sys
 
@@ -17,7 +17,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
     args_dict = {k: v for k, v in vars(args).items() if v is not None}
     settings = Settings().model_copy(update=args_dict)
-    settings.function = get_function(settings.function_path)
+    yaml_dict = validate_yaml(settings.function_path)
+    if not yaml_dict:
+        print(f"Validation of {settings.function_path} failed, exiting.")   
+        sys.exit(1)
+    settings.function = get_function(yaml_dict)
 
     while True:
         api_key = getpass.getpass("Enter your API key: ")
@@ -40,11 +44,10 @@ if __name__ == "__main__":
     with psycopg2.connect(database) as conn:
         make_tables(conn, settings)
 
-        counter = 1
+        counter = 0
         for i in range(0,settings.runs):
             print(f"Sending query {i+1}")
             raw_response = get_response(settings, prompt)
-            print(f"From the loop: {type(raw_response)}")
             try:
                 save_response(conn=conn, raw_response=raw_response, settings=settings)
                 print("Save successful.")

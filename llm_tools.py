@@ -1,20 +1,44 @@
 import yaml
 from pathlib import Path
 
-def yaml_to_json_schema(yaml_location: str) -> dict:
+def validate_yaml(yaml_location: str):
+
+    valid_types = ["string", "number", "integer", "object", "array", "boolean", "null"]
+    try:
+        with open(yaml_location, "r") as f:
+            yaml_text = f.read()
+    except FileNotFoundError:
+        print(f"File not found: {yaml_location}")
+        return False
+    except PermissionError:
+        print(f"Permission denied: {yaml_location}")
+        return False
+    except IsADirectoryError:
+        print(f"Path is a directory, not a file: {yaml_location}")
+        return False
+    except OSError as e:
+        print(f"OS error when opening file: {e}")
+        return False
+    
+    try:
+        yaml_dict = yaml.safe_load(yaml_text)
+    except yaml.YAMLError as e:
+        print(f"YAML parsing error: {e}")
+        return False
+    
+    fields = yaml_dict.get("fields", [])
+    for field in fields:
+        if field["type"] not in valid_types:
+            print(f"Invalid type: {field["type"]}. All types must be one of the following: {valid_types}.")
+            print(f"Please edit {yaml_location} and try again.")
+            return False
+    return yaml_dict
+        
+def get_function(yaml_dict: dict) -> dict:
     """
     Opens the YAML file for query tool and converts it to a JSON schema. Returns it as a dictionary to be added to a "tool" function.
     """
 
-    try:
-        with open(yaml_location, "r") as f:
-            yaml_text = f.read()
-    except Exception as e: 
-        print(f"Couldn't open the YAML file: {e}")
-    
-
-    yaml_dict = yaml.safe_load(yaml_text)
-    
     schema = {
         "$schema": "http://json-schema.org/draft-07/schema#",
         "type": "object",
@@ -26,31 +50,30 @@ def yaml_to_json_schema(yaml_location: str) -> dict:
     fields = yaml_dict.get("fields", [])
 
     for field in fields:
+
+        if field["name"] == "function_name":
+            function_name = field.get("description", "").strip()
+            continue
+
+        if field["name"] == "function_description":
+            function_description = field.get("description", "").strip()
+            continue 
+
         name = field["name"]
-        # Copy all keys except 'name' as schema attributes for this property
+
         prop_attrs = {k: v for k, v in field.items() if k != "name"}
-
         schema["properties"][name] = prop_attrs
-
-        # Add to required if explicitly set or default to required (optional tweak)
-        # Here we add fields that don't have 'optional: true' (if you want)
-        # For now, assume all fields required, or add logic as you want
         schema["required"].append(name)
-
-    return schema
-
-def get_function(yaml_location: str) -> dict:
-    converted_yaml = yaml_to_json_schema(yaml_location)
-    function_name = Path(yaml_location).stem
-
+    
     final_function = {
         "type": "function",
         "function": {
     "name": function_name,
-    "description": "a JSON schema to be populated based on the user input in the prompt.",
-    "parameters": converted_yaml
+    "description": function_description,
+    "parameters": schema
     }
     }
+
     return final_function
 
 tools = [

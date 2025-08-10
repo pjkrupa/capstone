@@ -4,8 +4,8 @@ from pathlib import Path
 
 def get_response(settings: Settings, prompt: str) -> str:
     
-    function_name = Path(settings.function_path).stem
     tools = [settings.function]
+    function_name = settings.function["function"]["name"]
     messages = [
     {"role": "user", "content": prompt}
     ]
@@ -24,9 +24,8 @@ def get_response(settings: Settings, prompt: str) -> str:
             }
     )
 
-    print(f"From before JSON conversion: {type(response)}")
     raw_response = response.model_dump_json()
-    print(f"From after JSON conversion: {type(raw_response)}")
+    
     return raw_response
 
 
