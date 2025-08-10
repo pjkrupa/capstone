@@ -5,6 +5,7 @@ import getpass
 from llm_client import get_response
 from llm_tools import validate_yaml, get_function
 from database import make_db_string, make_tables, save_response, row_count
+from validation import json_validator
 import sys
 
 settings = Settings()
@@ -48,6 +49,7 @@ if __name__ == "__main__":
         for i in range(0,settings.runs):
             print(f"Sending query {i+1}")
             raw_response = get_response(settings, prompt)
+            settings.passed_validation = json_validator(settings, raw_response)
             try:
                 save_response(conn=conn, raw_response=raw_response, settings=settings)
                 print("Save successful.")

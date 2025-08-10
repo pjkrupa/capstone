@@ -61,7 +61,7 @@ def get_function(yaml_dict: dict) -> dict:
 
         name = field["name"]
 
-        prop_attrs = {k: v for k, v in field.items() if k != "name"}
+        prop_attrs = {k: v for k, v in field.items() if k not in ("name", "value")}
         schema["properties"][name] = prop_attrs
         schema["required"].append(name)
     
