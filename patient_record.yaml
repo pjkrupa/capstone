@@ -15,11 +15,9 @@ fields:
     enum: ["John Doe"]
   - name: age
     type: integer
-    minimum: 0
     enum: [72]
   - name: weight
     type: number
-    minimum: 0
     enum: [202]
   - name: blood_pressure
     type: string
@@ -47,5 +45,12 @@ fields:
     type: array
     items:
       type: string
-    enum:
-      - ["Metorolol 50 mg PO BID", "Lisinopril 40 mg PO qd", "ASA 81 mg PO qd", "Furosemide 40 mg PO BID", "Spironolactone 50 mg PO qd", "Metformin 1000 mg PO BID", "Glipizide 10 mg PO BID", "Tylenol 325 mg PO q 4 hours as needed for pain"]
+      enum:
+        - "Metorolol 50 mg PO BID"
+        - "Lisinopril 40 mg PO qd"
+        - "ASA 81 mg PO qd"
+        - "Furosemide 40 mg PO BID"
+        - "Spironolactone 50 mg PO qd"
+        - "Metformin 1000 mg PO BID"
+        - "Glipizide 10 mg PO BID"
+        - "Tylenol 325 mg PO q 4 hours as needed for pain"

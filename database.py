@@ -5,7 +5,6 @@ from settings import Settings
 
 def make_db_string(settings: Settings):
     db_string = f"dbname={settings.pg_database} user={settings.pg_user} password={settings.pg_password} host={settings.pg_host} port={settings.pg_port}"
-    print(db_string)
     return db_string
 
 def drop_table(database):

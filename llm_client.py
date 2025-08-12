@@ -1,9 +1,11 @@
+import litellm
 from litellm import completion
 from settings import Settings
 from pathlib import Path
 
 def get_response(settings: Settings, prompt: str) -> str:
     
+    litellm.set_verbose = False
     tools = [settings.function]
     function_name = settings.function["function"]["name"]
     messages = [

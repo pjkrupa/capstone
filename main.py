@@ -53,6 +53,7 @@ if __name__ == "__main__":
             try:
                 save_response(conn=conn, raw_response=raw_response, settings=settings)
                 print("Save successful.")
+                print(f"Passed Validation? -> {settings.passed_validation}")
                 counter += 1
             except Exception as e:
                 print(f"Something went wrong: {e}")
