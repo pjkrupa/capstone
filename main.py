@@ -4,7 +4,7 @@ import psycopg2
 import getpass
 from llm_client import get_response
 from llm_tools import validate_yaml, get_function
-from database import make_db_string, make_tables, save_response, row_count
+from database import make_db_string, make_tables, save_response, row_count, pass_count
 from validation import json_validator
 import sys
 
@@ -49,7 +49,10 @@ if __name__ == "__main__":
         for i in range(0,settings.runs):
             print(f"Sending query {i+1}")
             raw_response = get_response(settings, prompt)
-            settings.passed_validation = json_validator(settings, raw_response)
+            result = json_validator(settings, raw_response)
+            settings.passed_validation = result[0]
+            settings.validation_errors = result[1]
+            
             try:
                 save_response(conn=conn, raw_response=raw_response, settings=settings)
                 print("Save successful.")
@@ -59,6 +62,8 @@ if __name__ == "__main__":
                 print(f"Something went wrong: {e}")
                 continue
         final_row_count = row_count(conn=conn, settings=settings)
+        passed = pass_count(conn=conn, settings=settings)
         print(f"Saved {counter} records for the {settings.run_id} run.")
         print(f"The {settings.run_id} run has a total of {final_row_count} rows.")
+        print(f"{passed} responses passed validation.")
         

@@ -1,6 +1,7 @@
 from settings import Settings
 import yaml
 import jsonschema, json
+from jsonschema import Draft7Validator
 
 def build_answer_schema(settings: Settings):
         """
@@ -44,9 +45,19 @@ def json_validator(settings: Settings, raw_response: str):
     test_response = raw_response['choices'][0]['message']['tool_calls'][0]['function']['arguments']
     data = json.loads(test_response)
 
-    try:
-        jsonschema.validate(instance=data, schema=json_schema)
-        return True
-    except jsonschema.ValidationError as e:
-        print("Validation failed:", e)
-        return False
+    validator = Draft7Validator(json_schema)
+    errors = list(validator.iter_errors(data))
+
+    if not errors:
+         return True, None
+    else:
+        errors_json = {}
+        for e in errors:
+            key = ".".join(str(p) for p in e.path) or "_root_"
+            errors_json[key] = {
+            "message": e.message,
+            "validator": e.validator,
+            "validator_value": e.validator_value,
+            }
+        errors_json = json.dumps(errors_json, indent=2)
+        return False, errors_json

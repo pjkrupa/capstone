@@ -39,8 +39,13 @@ fields:
     type: string
     enum: ["Left-sided systolic congestive heart failure"]
   - name: other_diagnosis
-    type: string
-    enum: ["Type 2 Diabetes, Stage 2 Hypertension, Osteoarthritis"]
+    type: array
+    items:
+      type: string
+      enum: 
+          - "Type 2 Diabetes"
+          - "Stage 2 Hypertension" 
+          - "Osteoarthritis"
   - name: current_medications
     type: array
     items:

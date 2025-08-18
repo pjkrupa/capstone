@@ -16,5 +16,6 @@ class Settings(BaseSettings):
     function: Optional[dict] = {}
     function_path: Optional[str] = ""
     passed_validation: Optional[bool] = False
+    validation_errors: Optional[str] = None
     model_config = SettingsConfigDict(env_file='.env')
     
