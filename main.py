@@ -47,7 +47,7 @@ if __name__ == "__main__":
 
         counter = 0
         for i in range(0,settings.runs):
-            print(f"Sending query {i+1}")
+            print(f"Sending query {i+1} of {settings.runs}")
             raw_response = get_response(settings, prompt)
             result = json_validator(settings, raw_response)
             settings.passed_validation = result[0]

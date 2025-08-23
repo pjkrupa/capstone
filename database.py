@@ -47,6 +47,7 @@ def save_response(conn: connect, raw_response: str, settings: Settings):
             """,
             (settings.run_id, settings.model, raw_response, settings.passed_validation, settings.validation_errors)
         )
+    conn.commit()
 
 def row_count(conn: connect, settings: Settings):
     with conn.cursor() as cur:

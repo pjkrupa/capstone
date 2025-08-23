@@ -5,3 +5,5 @@ __pycache__/
 *.log
 research/
 notes.txt
+play_db_backup.sql
+uv.lock
