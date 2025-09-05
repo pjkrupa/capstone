@@ -61,3 +61,7 @@ def json_validator(settings: Settings, raw_response: str):
             }
         errors_json = json.dumps(errors_json, indent=2)
         return False, errors_json
+    
+def tool_calls(settings: Settings, raw_response: str) -> bool:
+    raw_response = json.loads(raw_response)
+    return bool(raw_response['choices'][0]['message']['tool_calls'])

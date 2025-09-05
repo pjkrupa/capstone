@@ -1,6 +1,7 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import BaseModel, field_validator, PostgresDsn
-from typing import Optional 
+from typing import Optional
+from datetime import timedelta
 
 class Settings(BaseSettings):
     pg_host: str
@@ -15,7 +16,11 @@ class Settings(BaseSettings):
     run_id: Optional[str] = ""
     function: Optional[dict] = {}
     function_path: Optional[str] = ""
+    model_config = SettingsConfigDict(env_file='.env')
+    api_base: Optional[str] = ""
+    
+class Result(BaseModel):
+    raw_response: Optional[str] = ""
     passed_validation: Optional[bool] = False
     validation_errors: Optional[str] = None
-    model_config = SettingsConfigDict(env_file='.env')
-    
+    duration: Optional[timedelta] = None

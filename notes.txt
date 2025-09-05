@@ -6,3 +6,19 @@ backup:
 
 pg_dump -h hpmini -U player -d play_db > play_db_backup.sql
 pg_dump -h hpmini -U player -d play_db > /mnt/media/wgu/play_db_backup.sql
+
+
+fixing the bad dates:
+Use format: "date" (RFC3339 full-date) and a pattern to hard-bind YYYY-MM-DD.
+Add a clear description with a positive example.
+Provide examples for the property.
+Lock schema: additionalProperties: false.
+
+- name: date_admitted
+  type: string
+  format: date
+  enum: ["2050-07-01T00:00:00"]
+  pattern: '^\d{4}-\d{2}-\d{2}$'
+  description: "Date in ISO 8601 full-date format (YYYY-MM-DD). Example: 2020-04-06"
+  examples:
+    - "2020-04-06"

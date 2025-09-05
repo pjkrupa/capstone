@@ -13,24 +13,33 @@ def get_response(settings: Settings, prompt: str) -> str:
     {"role": "user", "content": prompt}
     ]
 
+    if settings.model.split("/")[0] == "ollama_chat":
+        params = {
+            "model": settings.model,
+            "tools": tools,
+            "api_base": settings.api_base,
+            "messages": messages,
+            "stream": False,
+        }
+    else:
+        params = {
+            "model": settings.model,
+            "tools": tools,
+            "api_key": settings.api_key,
+            "messages": messages,
+            "stream": False,
+            "tool_choice": {
+                "type": "function",
+                "function": {"name": function_name},
+                },
+        }
+
     max_retries = 5
     backoff = 2
 
     for attempt in range(1, max_retries+1):
         try:
-            response = completion(
-                model=settings.model,
-                tools=tools,
-                api_key=settings.api_key,
-                messages=messages,
-                stream=False,
-                tool_choice={
-                    "type": "function",
-                    "function": {
-                        "name": function_name
-                        }
-                    }
-            )
+            response = completion(**params)
             raw_response = response.model_dump_json()
             return raw_response
         except Exception as e:
@@ -42,7 +51,10 @@ def get_response(settings: Settings, prompt: str) -> str:
                 time.sleep(backoff)
                 backoff *= 2
             else:
-                raise
+                print("Model call failed.")
+                print(type(e))
+                print(str(e))
+                return None
 
 
 # logic for parsing the raw response later:

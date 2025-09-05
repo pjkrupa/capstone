@@ -35,4 +35,11 @@ def get_parser():
         required=True,
         help='Path to the YAML file defining the schema to be populated by the LLM call. The file name is used to name the function'
     )
+    parser.add_argument(
+        '-b',
+        '--api_base',
+        type=str,
+        required=False,
+        help='Optional path to the Ollama API base. Overrides .env.'
+    )
     return parser

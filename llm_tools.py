@@ -65,7 +65,6 @@ def get_function(yaml_dict: dict) -> dict:
         schema["properties"][name] = prop_attrs
         schema["required"].append(name)
     
-    print(schema)
 
     final_function = {
         "type": "function",

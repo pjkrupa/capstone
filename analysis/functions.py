@@ -60,17 +60,24 @@ def show_run_stats(df):
     pass_percentage = df['passed_validation'].mean()
     pass_percentage = round(pass_percentage*100, 2)
     run_time = df["timestamp"].max() - df["timestamp"].min()
-    cached_tokens = df["raw_response"].apply(lambda x: x["usage"]["prompt_tokens_details"]["cached_tokens"]).sum()
+    try:
+        cached_tokens = df["raw_response"].apply(lambda x: x["usage"]["prompt_tokens_details"]["cached_tokens"]).sum()
+    except Exception as e:
+        cached_tokens = 0
     prompt_tokens = df["raw_response"].apply(lambda x: x["usage"]["prompt_tokens"]).sum()
     completion_tokens = df["raw_response"].apply(lambda x: x["usage"]["completion_tokens"]).sum()
     model = df["model"].iloc[0]
     run_id = df["run_id"].iloc[0]
-    run_cost = round(
-        ((prompt_tokens-cached_tokens) / 1000000 * model_costs[model]["prompt"]) + 
-        (cached_tokens / 1000000 * model_costs[model]["cached"]) +
-        (completion_tokens / 1000000 * model_costs[model]["completion"]), 
-        2
-    )
+    
+    if df['model'].iloc[0].split("/")[0] == "ollama_chat" or "ollama":
+        run_cost = 0
+    else:
+        run_cost = round(
+            ((prompt_tokens-cached_tokens) / 1000000 * model_costs[model]["prompt"]) + 
+            (cached_tokens / 1000000 * model_costs[model]["cached"]) +
+            (completion_tokens / 1000000 * model_costs[model]["completion"]), 
+            2
+            )
     
     print(f"Run ID: {run_id}")
     print(f"Model used: {model}")
@@ -99,3 +106,9 @@ def show_failures(df):
             df[item] = df[item].fillna(0)
             count = df[item].sum()
             print(f"{item:<30} failures: {count:>5}")
+
+def analysis_stats(df):
+    run_ids = df["run_id"].unique().tolist()
+    for run_id in run_ids:
+        df_analysis['run_id'] = run_id
+        

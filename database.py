@@ -1,7 +1,7 @@
 import psycopg2
 from psycopg2 import connect
 import datetime
-from settings import Settings
+from settings import Settings, Result
 
 def make_db_string(settings: Settings):
     db_string = f"dbname={settings.pg_database} user={settings.pg_user} password={settings.pg_password} host={settings.pg_host} port={settings.pg_port}"
@@ -35,7 +35,7 @@ def make_tables(conn: connect, settings: Settings):
             """
         )
 
-def save_response(conn: connect, raw_response: str, settings: Settings):
+def save_response(conn: connect, result: Result, settings: Settings):
     """
     This function saves a response to the database.
     """
@@ -45,7 +45,7 @@ def save_response(conn: connect, raw_response: str, settings: Settings):
             INSERT INTO responses (run_id, model, raw_response, passed_validation, validation_errors)
             VALUES (%s, %s, %s, %s, %s);
             """,
-            (settings.run_id, settings.model, raw_response, settings.passed_validation, settings.validation_errors)
+            (settings.run_id, settings.model, result.raw_response, result.passed_validation, result.validation_errors)
         )
     conn.commit()
 
@@ -55,9 +55,9 @@ def row_count(conn: connect, settings: Settings):
             """
             SELECT COUNT(*)
             FROM responses
-            WHERE run_id = %s;
+            WHERE run_id = %s AND model = %s;
             """,
-            (settings.run_id,)
+            (settings.run_id, settings.model)
         )
         return cur.fetchone()[0]
     
@@ -67,8 +67,8 @@ def pass_count(conn: connect, settings: Settings):
             """
             SELECT COUNT(*)
             FROM responses
-            WHERE run_id = %s AND passed_validation = TRUE;
+            WHERE run_id = %s AND model = %s AND passed_validation = TRUE;
             """,
-            (settings.run_id,)
+            (settings.run_id, settings.model)
         )
         return cur.fetchone()[0]
