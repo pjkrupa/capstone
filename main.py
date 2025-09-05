@@ -4,9 +4,10 @@ import psycopg2
 import getpass
 from llm_client import get_response
 from llm_tools import validate_yaml, get_function
-from database import make_db_string, make_tables, save_response, row_count, pass_count
+from database import make_db_string, make_tables, save_response, row_count, pass_count, calculate_duration
 from validation import json_validator, tool_calls
 import sys
+from datetime import datetime
 
 settings = Settings()
 parser = get_parser()
@@ -48,9 +49,12 @@ if __name__ == "__main__":
 
         counter = 0
         for i in range(0,settings.runs):
+            start_time = datetime.now()
             result = Result()
             print(f"Sending query {i+1} of {settings.runs}")
             result.raw_response = get_response(settings, prompt)
+            end_time = datetime.now()
+            result.duration = end_time - start_time
             if not result.raw_response:
                 result.passed_validation = False
                 result.validation_errors = '{"model_failure": "true"}'
@@ -72,7 +76,13 @@ if __name__ == "__main__":
                 continue
         final_row_count = row_count(conn=conn, settings=settings)
         passed = pass_count(conn=conn, settings=settings)
+        final_duration = calculate_duration(conn=conn, settings=settings)
+        total_seconds = int(final_duration.total_seconds())
+        hours, remainder = divmod(total_seconds, 3600)
+        minutes, seconds = divmod(remainder, 60)
+
         print(f"Saved {counter} records for the {settings.run_id} run for model {settings.model}.")
+        print(f"Total duration: {hours:02}:{minutes:02}:{seconds:02}")
         print(f"There are a total of {final_row_count} rows for the {settings.model} on the {settings.run_id} run.")
         print(f"{passed} responses passed validation.")
         

@@ -30,6 +30,7 @@ def make_tables(conn: connect, settings: Settings):
                 raw_response JSONB,
                 passed_validation BOOLEAN,
                 validation_errors JSONB,
+                duration INTERVAL,
                 timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
             """
@@ -42,10 +43,10 @@ def save_response(conn: connect, result: Result, settings: Settings):
     with conn.cursor() as cur:
         cur.execute(
             """
-            INSERT INTO responses (run_id, model, raw_response, passed_validation, validation_errors)
-            VALUES (%s, %s, %s, %s, %s);
+            INSERT INTO responses (run_id, model, raw_response, passed_validation, validation_errors, duration)
+            VALUES (%s, %s, %s, %s, %s, %s);
             """,
-            (settings.run_id, settings.model, result.raw_response, result.passed_validation, result.validation_errors)
+            (settings.run_id, settings.model, result.raw_response, result.passed_validation, result.validation_errors, result.duration)
         )
     conn.commit()
 
@@ -68,6 +69,18 @@ def pass_count(conn: connect, settings: Settings):
             SELECT COUNT(*)
             FROM responses
             WHERE run_id = %s AND model = %s AND passed_validation = TRUE;
+            """,
+            (settings.run_id, settings.model)
+        )
+        return cur.fetchone()[0]
+
+def calculate_duration(conn: connect, settings: Settings):
+    with conn.cursor() as cur:
+        cur.execute(
+            """
+            SELECT SUM(duration)
+            FROM responses
+            WHERE run_id = %s AND model = %s;
             """,
             (settings.run_id, settings.model)
         )
