@@ -25,7 +25,7 @@ if __name__ == "__main__":
         sys.exit(1)
     settings.function = get_function(yaml_dict)
 
-    if settings.model.split("/")[0] != "ollama_chat":
+    if settings.model.split("/")[0] not in ["ollama_chat", "ollama"]:
         while True:
             api_key = getpass.getpass("Enter your API key: ")
             if not api_key:
@@ -53,6 +53,9 @@ if __name__ == "__main__":
             result = Result()
             print(f"Sending query {i+1} of {settings.runs}")
             result.raw_response = get_response(settings, prompt)
+            if result.raw_response is None:
+                print("No response from API, skipping to next try...")
+                continue
             end_time = datetime.now()
             result.duration = end_time - start_time
             if not result.raw_response:

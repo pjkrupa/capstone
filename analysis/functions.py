@@ -1,4 +1,5 @@
 from pandas import DataFrame
+import numpy as np
 
 def preprocess_failures(df: DataFrame) -> DataFrame:
     """
@@ -38,6 +39,27 @@ def preprocess_failures(df: DataFrame) -> DataFrame:
     
     return failures_df
 
+def sum_failures(df):
+    group_cols = ['run_id', 'model']
+    exclude_cols = [
+        'id', 
+        'run_id', 
+        'model', 
+        'raw_response', 
+        'passed_validation', 
+        'validation_errors',
+        'timestamp', 
+        'duration'
+        ]
+    df_cols = df.columns
+    sum_cols = [x for x in df_cols if x not in exclude_cols]
+    df_failures_analysis = (
+        df.groupby(group_cols, as_index=False)[sum_cols]
+        .sum()
+    )
+    df_final = df_failures_analysis.rename(columns={col: f"{col}_failure" for col in sum_cols})
+    return df_final
+
 def show_run_stats(df):
     model_costs = {
         "openai/gpt-4o": {
@@ -60,12 +82,19 @@ def show_run_stats(df):
     pass_percentage = df['passed_validation'].mean()
     pass_percentage = round(pass_percentage*100, 2)
     run_time = df["timestamp"].max() - df["timestamp"].min()
+
     try:
         cached_tokens = df["raw_response"].apply(lambda x: x["usage"]["prompt_tokens_details"]["cached_tokens"]).sum()
     except Exception as e:
         cached_tokens = 0
-    prompt_tokens = df["raw_response"].apply(lambda x: x["usage"]["prompt_tokens"]).sum()
-    completion_tokens = df["raw_response"].apply(lambda x: x["usage"]["completion_tokens"]).sum()
+    try:
+        prompt_tokens = df["raw_response"].apply(lambda x: x["usage"]["prompt_tokens"]).sum()
+    except Exception as e:
+        prompt_tokens = 0
+    try:
+        completion_tokens = df["raw_response"].apply(lambda x: x["usage"]["completion_tokens"]).sum()
+    except Exception as e:
+        completion_tokens = 0
     model = df["model"].iloc[0]
     run_id = df["run_id"].iloc[0]
     
@@ -79,8 +108,10 @@ def show_run_stats(df):
             2
             )
     
+    models = show_unique(df, column='model')
+    models = models.tolist()
     print(f"Run ID: {run_id}")
-    print(f"Model used: {model}")
+    print(f"Models used: {models}")
     print(f"Number of requests: {sample_size}")
     print(f"Estimated duration of the entire run: {run_time}")
     print(f"Validated requests: {pass_percentage}%")
@@ -96,7 +127,8 @@ def show_failures(df):
         'raw_response', 
         'passed_validation', 
         'validation_errors', 
-        'timestamp'
+        'timestamp',
+        'duration'
     ]
     
     all_columns = df.columns.to_list()
@@ -107,8 +139,7 @@ def show_failures(df):
             count = df[item].sum()
             print(f"{item:<30} failures: {count:>5}")
 
-def analysis_stats(df):
-    run_ids = df["run_id"].unique().tolist()
-    for run_id in run_ids:
-        df_analysis['run_id'] = run_id
-        
+def show_unique(df: DataFrame, column: str):
+    sorted = df[column].unique()
+    sorted = np.sort(sorted)
+    return sorted

@@ -13,7 +13,7 @@ def get_response(settings: Settings, prompt: str) -> str:
     {"role": "user", "content": prompt}
     ]
 
-    if settings.model.split("/")[0] == "ollama_chat":
+    if settings.model.split("/")[0] in ["ollama_chat", "ollama"]:
         params = {
             "model": settings.model,
             "tools": tools,

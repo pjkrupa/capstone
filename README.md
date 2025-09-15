@@ -29,7 +29,7 @@ python3 main.py \
     --run_id base \
     --function patient_record_a.yaml \
     --api_base http://localhost:11434 \
-    --model ollama_chat/llama3:8b
+    --model ollama_chat/llama3.1:8b
 
 b runs:
 python3 main.py \
@@ -41,7 +41,7 @@ python3 main.py \
 
 python3 main.py \
     --path sample_medical_record.txt \
-    --runs 4 \
+    --runs 1000 \
     --run_id test_b \
     --function patient_record_b.yaml \
     -m openai/gpt-4o
@@ -56,7 +56,16 @@ python3 main.py \
 with ollama, rented GPU:
 python3 main.py \
     --path sample_medical_record.txt \
+    --runs 76 \
+    --run_id test_e \
+    --function patient_record_a.yaml \
+    -m ollama/llama3.3:70b
+
+redo local 3060 llama3.1 run with ollama_chat: ollama_chat/llama3.1:8b
+
+python3 main.py \
+    --path sample_medical_record.txt \
     --runs 4 \
-    --run_id test_b \
-    --function patient_record_b.yaml \
-    -m ollama_chat/llama3.3:70b
+    --run_id test_a \
+    --function patient_record_a.yaml \
+    -m ollama_chat/llama3.1:8b
