@@ -23,3 +23,26 @@ def plot_validation_rate(df):
 
     plt.tight_layout()
     plt.show()
+
+def plot_failures(df, scale: int):
+    failure_cols = [col for col in df.columns if col.endswith("_failure")]
+    
+    df_plot = df.set_index("model")[failure_cols]
+    
+    df_plot = df_plot.loc[:, (df_plot != 0).any(axis=0)]
+
+    df_plot = df_plot[df_plot.sum().sort_values(ascending=False).index]
+
+    ax = df_plot.plot(
+        kind="bar",
+        stacked=True,
+        figsize=(10, 6)
+    )
+
+    plt.ylabel("Failure Value")
+    plt.title("Failures by Model")
+    plt.xticks(rotation=45, ha="right")
+    plt.ylim(0, scale)
+    plt.legend(title="Failure Type", bbox_to_anchor=(1.05, 1), loc="upper left")
+    plt.tight_layout()
+    plt.show()
