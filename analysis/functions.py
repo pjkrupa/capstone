@@ -78,45 +78,66 @@ def show_run_stats(df):
             "completion": 15.0
         }
     }
-    sample_size = df.shape[0]
-    pass_percentage = df['passed_validation'].mean()
-    pass_percentage = round(pass_percentage*100, 2)
-    run_time = df["timestamp"].max() - df["timestamp"].min()
+    run_id = df["run_id"].iloc[0]   
+    models = df['model'].unique().tolist()
+    
+    stats_dict = {}
+    for model in models:
+        df_model = df[df['model'] == model]
+        stats_dict[model] = {}
+        sample_size = df_model.shape[0]
+        run_time = df["duration"].sum()
+        pass_percentage = df_model['passed_validation'].mean()
+        pass_percentage = round(pass_percentage*100, 2)
+        stats_dict[model]['sample_size'] = sample_size
+        stats_dict[model]['run_time'] = run_time
+        stats_dict[model]['pass_percentage'] = pass_percentage
 
-    try:
-        cached_tokens = df["raw_response"].apply(lambda x: x["usage"]["prompt_tokens_details"]["cached_tokens"]).sum()
-    except Exception as e:
-        cached_tokens = 0
-    try:
-        prompt_tokens = df["raw_response"].apply(lambda x: x["usage"]["prompt_tokens"]).sum()
-    except Exception as e:
-        prompt_tokens = 0
-    try:
-        completion_tokens = df["raw_response"].apply(lambda x: x["usage"]["completion_tokens"]).sum()
-    except Exception as e:
-        completion_tokens = 0
-    model = df["model"].iloc[0]
-    run_id = df["run_id"].iloc[0]
-    
-    if df['model'].iloc[0].split("/")[0] == "ollama_chat" or "ollama":
-        run_cost = 0
-    else:
-        run_cost = round(
-            ((prompt_tokens-cached_tokens) / 1000000 * model_costs[model]["prompt"]) + 
-            (cached_tokens / 1000000 * model_costs[model]["cached"]) +
-            (completion_tokens / 1000000 * model_costs[model]["completion"]), 
-            2
-            )
-    
-    models = show_unique(df, column='model')
-    models = models.tolist()
+        try:
+            cached_tokens = df_model["raw_response"].apply(lambda x: x["usage"]["prompt_tokens_details"]["cached_tokens"]).sum()
+            stats_dict[model]['cached_tokens'] = cached_tokens
+        except Exception as e:
+            stats_dict[model]['cached_tokens'] = 0
+        try:
+            prompt_tokens = df_model["raw_response"].apply(lambda x: x["usage"]["prompt_tokens"]).sum()
+            stats_dict[model]['prompt_tokens'] = prompt_tokens
+        except Exception as e:
+            stats_dict[model]['prompt_tokens'] = 0
+        try:
+            completion_tokens = df_model["raw_response"].apply(lambda x: x["usage"]["completion_tokens"]).sum()
+            stats_dict[model]['completion_tokens'] = completion_tokens
+        except Exception as e:
+            stats_dict[model]['completion_tokens'] = 0
+        
+        if model.split("/")[0] == "ollama_chat" or "ollama":
+            stats_dict[model]['run_cost'] = 0
+        else:
+            run_cost = round(
+                ((prompt_tokens-cached_tokens) / 1000000 * model_costs[model]["prompt"]) + 
+                (cached_tokens / 1000000 * model_costs[model]["cached"]) +
+                (completion_tokens / 1000000 * model_costs[model]["completion"]), 
+                2
+                )
+            stats_dict[model]['run_cost'] = run_cost
+        
+
     print(f"Run ID: {run_id}")
     print(f"Models used: {models}")
-    print(f"Number of requests: {sample_size}")
-    print(f"Estimated duration of the entire run: {run_time}")
-    print(f"Validated requests: {pass_percentage}%")
-    print(f"The run used {prompt_tokens:,} prompt tokens and {completion_tokens:,} completion tokens.")
-    print(f"Estimated cost of the run: US${run_cost}")
+    print(f"Number of requests:")
+    for model in models:
+        print(f"\t{model}: {stats_dict[model]['sample_size']}")
+    print(f"Estimated duration of query time:")
+    for model in models:
+        print(f"\t{model}: {stats_dict[model]['run_time']}")
+    print(f"Validation percentage:")
+    for model in models:
+        print(f"\t{model}: {stats_dict[model]['pass_percentage']}%")
+    print(f"Tokens used:")
+    for model in models:
+        print(f"\t{model}: {stats_dict[model]['prompt_tokens']} prompt tokens, {stats_dict[model]['completion_tokens']} completion tokens.")
+    print(f"Estimated cost of the run:")
+    for model in models:
+        print(f"\t{model}: US${stats_dict[model]['run_cost']}")
 
 
 def show_failures(df):
