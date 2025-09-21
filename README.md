@@ -8,13 +8,13 @@ This is a tool to test how accuratly a particular LLM uses a JSON schema to extr
 The YAML file should look like this:
 
     fields:
-  - name: function_name
+    name: function_name
     type: string
     description: "populate_patient_data"
-  - name: function_description
+    name: function_description
     type: string
     description: "A JSON schema to be populated with information extracted from a medical examination record"
-  - name: medical_record_number
+    name: medical_record_number
     type: string
     description: "Unique patient medical record identifier"
     enum: ["123456789"]
@@ -52,72 +52,4 @@ Or:
         -f patient_record_a.yaml \
         -m ollama_chat/llama3.1:8b
 
-The `.env` file sets the variables for the PostgreSQL database. The CLI parameters can, alternatively, be set in the `.env` file.
-
-    export OLLAMA_API_BASE="http://inference-gpu-droplet:11434"
-
-    python3 main.py --path sample_medical_record.txt --runs 2 --run_id base --function patient_record.yaml
-
-    openai/gpt-5-nano
-    ollama_chat/llama3:8b
-    ollama_chat/llama3.3:70b
-    ollama_chat/command-r-plus:104b
-
-
-last two model runs:
-python3 main.py --path sample_medical_record.txt --runs x --run_id test_g --function patient_record.yaml -m ollama/command-r-plus:104b
-python3 main.py --path sample_medical_record.txt --runs x --run_id test_h --function patient_record.yaml -m ollama/llama3.3:70b
-python3 main.py \
-    --path sample_medical_record.txt \
-    --runs 2 \
-    --run_id test_j \
-    --function patient_record.yaml \
-    --model ollama_chat/gpt-oss:120b
-
-run locally:
-python3 main.py \
-    --path sample_medical_record.txt \
-    --runs 3 \
-    --run_id base \
-    --function patient_record_a.yaml \
-    --api_base http://localhost:11434 \
-    --model ollama_chat/llama3.1:8b
-
-b runs:
-python3 main.py \
-    --path sample_medical_record.txt \
-    --runs 4 \
-    --run_id test_b \
-    --function patient_record_b.yaml \
-    -m anthropic/claude-sonnet-4-20250514
-
-python3 main.py \
-    --path sample_medical_record.txt \
-    --runs 1000 \
-    --run_id test_b \
-    --function patient_record_b.yaml \
-    -m openai/gpt-4o
-
-python3 main.py \
-    --path sample_medical_record.txt \
-    --runs 4 \
-    --run_id test_b \
-    --function patient_record_b.yaml \
-    -m openai/gpt-5-nano
-
-with ollama, rented GPU:
-python3 main.py \
-    --path sample_medical_record.txt \
-    --runs 76 \
-    --run_id test_e \
-    --function patient_record_a.yaml \
-    -m ollama/llama3.3:70b
-
-redo local 3060 llama3.1 run with ollama_chat: ollama_chat/llama3.1:8b
-
-python3 main.py \
-    --path sample_medical_record.txt \
-    --runs 4 \
-    --run_id test_a \
-    --function patient_record_a.yaml \
-    -m ollama_chat/llama3.1:8b
+The CLI parameters can, alternatively, be set in the `.env` file. The `.env` file also sets the variables for the PostgreSQL database.
