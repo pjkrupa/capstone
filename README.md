@@ -42,14 +42,5 @@ So, for example:
         --run_id test_a \
         --function patient_record_a.yaml \
         --model ollama_chat/llama3.1:8b
-    ...
-
-Or: 
-    python3 main.py \
-        -p sample_medical_record.txt \
-        -r 4 \
-        -i test_a \
-        -f patient_record_a.yaml \
-        -m ollama_chat/llama3.1:8b
 
 The CLI parameters can, alternatively, be set in the `.env` file. The `.env` file also sets the variables for the PostgreSQL database.
