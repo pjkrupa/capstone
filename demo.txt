@@ -1,6 +1,0 @@
-python3 main.py \
-    --path sample_medical_record.txt \
-    --runs 10 \
-    --run_id demo_b \
-    --function patient_record_b.yaml \
-    -m openai/gpt-4o

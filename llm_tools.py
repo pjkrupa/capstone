@@ -36,7 +36,8 @@ def validate_yaml(yaml_location: str):
         
 def get_function(yaml_dict: dict) -> dict:
     """
-    Opens the YAML file for query tool and converts it to a JSON schema. Returns it as a dictionary to be added to a "tool" function.
+    Opens the YAML file for query tool and converts it to a JSON schema. 
+    Returns it as a dictionary to be added to a "tool" function.
     """
 
     schema = {
@@ -76,48 +77,3 @@ def get_function(yaml_dict: dict) -> dict:
     }
 
     return final_function
-
-tools = [
-    {
-        "type": "function",
-        "function": {
-            "name": "populate_patient_record",
-            "description": "Populate a patient record with medical details based on user input.",
-            "parameters": {
-                "$schema": "http://json-schema.org/draft-07/schema#",
-                "title": "PatientRecord",
-                "type": "object",
-                "properties": {
-                    "medical_record_number": {"type": "string"},
-                    "patient_name": {"type": "string"},
-                    "age": {"type": "integer", "minimum": 0},
-                    "weight": {"type": "number", "minimum": 0},
-                    "blood_pressure": {
-                        "type": "string",
-                        "pattern": "^\\d{2,3}/\\d{2,3}$"
-                    },
-                    "date_admitted": {"type": "string", "format": "date"},
-                    "date_discharged": {"type": "string", "format": "date"},
-                    "attending_physician": {"type": "string"},
-                    "diagnosis": {"type": "string"},
-                    "other_diagnosis": {
-                        "type": "array",
-                        "items": {"type": "string"}
-                    },
-                    "current_medications": {
-                        "type": "array",
-                        "items": {"type": "string"}
-                    }
-                },
-                "required": [
-                    "medical_record_number",
-                    "name",
-                    "age",
-                    "date_admitted",
-                    "attending_physician",
-                    "diagnosis"
-                ]
-            }
-        }
-    }
-]
